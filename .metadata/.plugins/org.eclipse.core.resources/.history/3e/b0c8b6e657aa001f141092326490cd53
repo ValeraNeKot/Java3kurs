@@ -1,0 +1,132 @@
+package val.java_cl;
+
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+
+
+public class Client extends Application {
+
+    private TextField sizeField;
+    private GridPane matrixGrid;
+    private Button sendButton;
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Matrix Client");
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        HBox sizeBox = new HBox(10);
+        sizeField = new TextField();
+        sizeField.setPromptText("Введите размер матрицы");
+        Button generateButton = new Button("Создать матрицу");
+        sizeBox.getChildren().addAll(new Label("Размер матрицы:"), sizeField, generateButton);
+
+        matrixGrid = new GridPane();
+        matrixGrid.setHgap(5);
+        matrixGrid.setVgap(5);
+
+        sendButton = new Button("Отправить матрицу");
+        sendButton.setDisable(true);
+
+        root.getChildren().addAll(sizeBox, matrixGrid, sendButton);
+
+        generateButton.setOnAction(e -> generateMatrixInput());
+        sendButton.setOnAction(e -> sendMatrix());
+
+        primaryStage.setScene(new Scene(root, 400, 300));
+        primaryStage.show();
+    }
+
+    private void generateMatrixInput() {
+        matrixGrid.getChildren().clear();
+        try {
+            int size = Integer.parseInt(sizeField.getText().trim());
+            if (size <= 0) throw new NumberFormatException();
+            for (int i = 0; i < size; i++) {    
+            	for (int j = 0; j < size; j++) {
+                    TextField cell = new TextField();
+                    cell.setPrefWidth(50);
+                    matrixGrid.add(cell, j, i);
+                }
+            }
+            sendButton.setDisable(false);
+        } catch (NumberFormatException e) {
+            showAlert("Ошибка", "Введите корректный размер матрицы (положительное целое число).");
+        }
+    }
+
+    private void sendMatrix() {
+        try {
+            double[][] matrix = getMatrixFromInput();
+
+            String serverAddress = "localhost";
+            int port = 12345;
+            try (Socket socket = new Socket(serverAddress, port);
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+                out.writeObject(matrix);
+                out.flush();
+
+                double result = in.readDouble();
+                showAlert("Результат", "Отношение среднего значения главной диагонали к побочной: " + result);
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert("Ошибка", "Убедитесь, что все элементы матрицы заполнены корректными числами.");
+        } catch (IOException e) {
+            showAlert("Ошибка подключения", "Не удалось подключиться к серверу.");
+        }
+    }
+
+    private double[][] getMatrixFromInput() throws NumberFormatException {
+        int size = Integer.parseInt(sizeField.getText().trim());
+        double[][] matrix = new double[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                TextField cell = (TextField) getNodeFromGridPane(matrixGrid, j, i);
+                if (cell == null || cell.getText().trim().isEmpty()) {
+                    throw new NumberFormatException("Пустая ячейка");
+                }
+                matrix[i][j] = Double.parseDouble(cell.getText().trim());
+            }
+        }
+
+        return matrix;
+    }
+
+    private Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
+        for (Node node : gridPane.getChildren()) {
+            if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

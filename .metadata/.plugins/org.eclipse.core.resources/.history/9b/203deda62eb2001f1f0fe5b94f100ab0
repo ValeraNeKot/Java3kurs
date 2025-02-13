@@ -1,0 +1,26 @@
+package com.spring.controller;
+
+import com.spring.service.StringService;
+
+import java.util.List;
+
+public class StringController {
+    private StringService stringService;
+
+    // Сеттер для инъекции зависимости
+    public void setStringService(StringService stringService) {
+        this.stringService = stringService;
+    }
+
+    public boolean searchSubstring(String mainString, String substring) {
+        return stringService.containsSubstring(mainString, substring);
+    }
+
+    public String convertToUpperCase(String input) {
+        return stringService.toUpperCase(input);
+    }
+
+    public List<String> sortStrings(List<String> strings) {
+        return stringService.sortStrings(strings);
+    }
+}

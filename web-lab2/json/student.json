@@ -1,0 +1,4 @@
+[
+{"name":"valera","age":35,"position":["Founder","SEO","coder"],"skills":["java","python","c#","kotlin"],"salary":{"2025":14000,"2024":12000,"2020":10000}},
+{"name":"oleg","age":35,"position":["Founder","SEO","coder"],"skills":["java","python","c++","kotlin"],"salary":{"2018":12000,"2024":14000,"2010":10000}}
+]
