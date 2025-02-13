@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;val.java_cl.ClientSwing&apos; to &apos;Client&apos;&#x0D;&#x0A;- Original project: &apos;java_cl&apos;&#x0D;&#x0A;- Original element: &apos;val.java_cl.ClientSwing&apos;&#x0D;&#x0A;- Renamed element: &apos;val.java_cl.Client&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;ClientSwing&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;val.java_cl{Client.java[ClientSwing" matchStrategy="1" name="Client" qualified="false" references="true" similarDeclarations="false" stamp="1732549947551" textual="false" version="1.0"/>
-</session>
